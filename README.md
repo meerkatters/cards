@@ -1,7 +1,13 @@
-# card_counter
+## blackjack.py
+play a game of black jack.
+
+learn about betting..
+
+
+## card_counter
 A game to practice card counting (lo-hi method)
 
-## Usage
+### Usage
 `$ python card_counter.py -h`
 
 User will be promted at terminal:
