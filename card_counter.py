@@ -1,49 +1,59 @@
 """Game to practice card counting."""
 import argparse
 
-from cards import Deck
+from cards import Shoe
 
 
-def card_counter(num_decks: int):
-    """Game to deal and count cards."""    
-    print(f"Game: practice card counting with {num_decks=}")
-    _user_commands()
+class CardCounter:
 
-    end_game = False
-    shoe = Deck()
-    print("Press any key to begin...")
+    def __init__(self, num_decks: int):
+        self.num_decks = num_decks
+        self.shoe = Shoe(num_decks=num_decks)
+        self._end_game = False
+        self.actions = {
+            "q": {"desc": "quit", "method": self._end_game},
+            "r": {"desc": "show running count", "method": self.show_running_count},
+            "t": {"desc": "show true count", "method": self.show_true_count},
+            "d": {"desc": "show discarp pile", "method": self.show_discard},
+            "s": {"desc": "show shoe", "method": self.show_shoe},
+            "h": {"desc": "show user commands", "method": self.show_user_commands},
+        }
 
-    while not end_game:
-        user_cmd = input().lower()
+    def play(self):
+        print(f"Game: practice card counting with {self.num_decks=}")
+        self.show_user_commands()
+        print("Press any key to begin...")
 
-        if user_cmd == "q":
-            end_game = True
-            print("Game over.")
-        elif user_cmd == "r":
-            print(f"running count is: {shoe.running_count}")
-        elif user_cmd == "t":
-            print(f"true count is: {shoe.true_count}")
-        elif user_cmd == "d":
-            print(shoe.discard)
-        elif user_cmd == "s":
-            print(shoe.cards)
-        elif user_cmd == "u":
-            _user_commands()
-        else:
-            shoe.deal_card()
-            print(shoe.discard[-1])
+        while not self._end_game:
+            user_cmd = input().lower()
+            action = self.actions.get(user_cmd, None)
+            if action is not None:
+                action["method"]()
+            else:
+                # weird bug here:
+                # if there is a value in a shoe, i want to show it and display 
+                self.shoe.deal_card()
+                print(f"draw: {self.shoe.discard[-1]}")
 
+    def _end_game(self):
+        self._end_game = True
+        print("Game over.")    
 
-def _user_commands():
-    print()
-    print("enter - deal card")
-    print("c - view running count")
-    print("t - view true count")
-    print("d - view discard pile")
-    print("s - view shoe")
-    print("q - quit")
-    print("u - user commands")
-    print()
+    def show_running_count(self):
+        print(f"running count is: {self.shoe.running_count}")
+
+    def show_true_count(self):
+        print(f"true count is: {self.shoe.true_count}")
+
+    def show_discard(self):
+        print(self.shoe.discard)
+
+    def show_shoe(self):
+        print(self.shoe.cards)
+
+    def show_user_commands(self):
+        for command, action in self.actions.items():
+            print(f"{command} = {action['desc']}")
 
 
 def _get_user_args():
@@ -64,4 +74,5 @@ def _get_user_args():
 
 if __name__ == "__main__":
     args = _get_user_args()
-    card_counter(args.num)
+    cc = CardCounter(args.num)
+    cc.play()
