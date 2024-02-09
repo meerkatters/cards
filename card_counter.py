@@ -1,48 +1,49 @@
 """Game to practice card counting."""
 import argparse
 
-from cards import Shoe
-
-
-class CountData:
-
-    def __init__(self):
-        self.all_counts = [] # List[List[tupple]]
-        self.active_count = [] # List[tupple]
-    
-    def new_shoe(self):
-        if self.active_count:
-            self.all_counts.append(self.active_count)
-
-    def add(self, card: str, count: int):
-        self.active_count.append((card, count))
+from cards import Deck
 
 
 def card_counter(num_decks: int):
     """Game to deal and count cards."""    
-    shoe = Shoe(num_decks=num_decks)
-
-    print("Game: practice card counting")
-    print(f"Number of standard decks used: {num_decks}\n")
-    print("enter - deal card")
-    print("c - view count")
-    print("q - quit\n")
-    print("Press enter to start...")
+    print(f"Game: practice card counting with {num_decks=}")
+    _user_commands()
 
     end_game = False
+    shoe = Deck()
+    print("Press any key to begin...")
+
     while not end_game:
         user_cmd = input().lower()
+
         if user_cmd == "q":
             end_game = True
-        if user_cmd == "c":
-            print(f"count is: {shoe.count}")
-        if user_cmd == "discard":
+            print("Game over.")
+        elif user_cmd == "r":
+            print(f"running count is: {shoe.running_count}")
+        elif user_cmd == "t":
+            print(f"true count is: {shoe.true_count}")
+        elif user_cmd == "d":
             print(shoe.discard)
-        if user_cmd == "shoe":
+        elif user_cmd == "s":
             print(shoe.cards)
-        if user_cmd == "":
+        elif user_cmd == "u":
+            _user_commands()
+        else:
             shoe.deal_card()
             print(shoe.discard[-1])
+
+
+def _user_commands():
+    print()
+    print("enter - deal card")
+    print("c - view running count")
+    print("t - view true count")
+    print("d - view discard pile")
+    print("s - view shoe")
+    print("q - quit")
+    print("u - user commands")
+    print()
 
 
 def _get_user_args():
@@ -59,6 +60,7 @@ def _get_user_args():
     )
     args = parser.parse_args()
     return args
+
 
 if __name__ == "__main__":
     args = _get_user_args()
